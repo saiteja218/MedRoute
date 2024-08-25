@@ -4,6 +4,7 @@ import Grid from '@mui/material/Grid';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
+import Link from '@mui/material/Link';
 import { useLocation } from 'react-router-dom';
 import Timeline from '@mui/lab/Timeline';
 import TimelineItem, { timelineItemClasses } from '@mui/lab/TimelineItem';
@@ -51,16 +52,17 @@ function Details() {
         }
     }, [latLng])
     useEffect(() => {
+
         if (latLng) {
 
             let routing_api = `https://api.geoapify.com/v1/routing?waypoints=${latLng.lat},${latLng.lng}|${hospital.lat},${hospital.lon}&mode=drive&details=instruction_details&apiKey=${apiKey}`
             axios.get(routing_api).then(resp => {
                 // console.log(resp.data.features[0].properties);
-                
+
                 const steps = (resp.data.features[0].properties.legs[0].steps).map((step) => {
-                    
-                    
-                    return (step.instruction.transition_instruction + (step.instruction.post_transition_instruction? step.instruction.post_transition_instruction:""));
+
+
+                    return (step.instruction.transition_instruction + (step.instruction.post_transition_instruction ? step.instruction.post_transition_instruction : ""));
                 });
                 setroutes(steps)
 
@@ -76,8 +78,8 @@ function Details() {
 
     return (
 
-        <div style={{ backgroundColor: "#f54337",minHeight:"91.9vh" }}>
-
+        <div style={{ backgroundColor: "#f54337", minHeight: "91.9vh" }}>
+            
 
             {/* <Container sx={{ m: 2 }}> */}
             <Grid container spacing={1}>
@@ -87,7 +89,14 @@ function Details() {
                         <CardContent >
                             <div style={{ borderBottom: "3px solid grey", padding: "0.5rem" }}>
                                 <Typography gutterBottom variant="h5" component="div" style={{ borderBottom: "3px solid grey" }}>
-                                    {hospital.name}
+                                        {hospital.name} <Link
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            sx={{ marginLeft: '0.2rem', color: 'red' ,textDecoration:"none"}}
+                                            href={`https://www.google.com/maps/search/?api=1&query=${hospital.formatted}`}
+                                        >
+                                            (View on Maps)
+                                        </Link>
                                 </Typography>
                                 {latLng ? (
                                     <>
@@ -136,14 +145,14 @@ function Details() {
                 </Grid>
                 <Grid item xs={5}>
                     <div style={{ border: "2px solid white", margin: "2rem", padding: "1rem", borderRadius: "5px" }}>
-                        <h2 style={{color:'white'}}>Directions to Hospital</h2>
+                        <h2 style={{ color: 'white' }}>Directions to Hospital</h2>
                         {
                             routes.map((step, index) => {
                                 return (
                                     <Timeline key={index} style={{ height: "50px", margin: "10px" }} sx={{
                                         [`& .${timelineItemClasses.root}:before`]: {
                                             flex: 0,
-                                            padding: "1rem" 
+                                            padding: "1rem"
                                         },
                                     }}>
                                         <TimelineItem style={{ marginTop: "0px" }} >
@@ -151,7 +160,7 @@ function Details() {
                                                 <TimelineDot sx={{ m: "5px", mt: "0" }} />
                                                 {index < routes.length - 1 && <TimelineConnector />}
                                             </TimelineSeparator>
-                                            <TimelineContent sx={{ p: "0 10px", lineHeight: "1" ,color:"white"}}>{step}</TimelineContent>
+                                            <TimelineContent sx={{ p: "0 10px", lineHeight: "1", color: "white" }}>{step}</TimelineContent>
                                         </TimelineItem>
 
                                     </Timeline>
